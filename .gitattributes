@@ -1,0 +1,6 @@
+.mvn/* linguist-generated=true linguist-vendored=true
+mvnw linguist-generated=true linguist-vendored=true
+mvnw.cmd linguist-generated=true linguist-vendored=true
+
+*.java linguist-language=Java
+*.g4 linguist-language=ANTLR
