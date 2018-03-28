@@ -206,14 +206,36 @@ public interface Linguagem {
         }
     }
 
-    class ExpMult extends ExpBin {
-        public ExpMult(Expressao esq, Expressao dir) {
+    class ExpMul extends ExpBin {
+        public ExpMul(Expressao esq, Expressao dir) {
             super(esq, dir);
         }
 
         @Override
         public int getValor() {
             return esq.getValor() * dir.getValor();
+        }
+    }
+
+    class ExpDiv extends ExpBin {
+        public ExpDiv(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public int getValor() {
+            return esq.getValor() / dir.getValor();
+        }
+    }
+
+    class ExpPot extends ExpBin {
+        public ExpPot(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public int getValor() {
+            return (int) Math.pow(esq.getValor(), dir.getValor());
         }
     }
 

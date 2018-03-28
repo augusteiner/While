@@ -1,0 +1,41 @@
+
+se 0 = 10 - 10 / 5 * 5 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 33 = 3 * 2 + 3 * 3 ^ 2 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 30 = 2 ^ 3 * 3 + 2 * 3 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 1 = 2 ^ 0 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 2 = 2 ^ 1 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 12 = (2 + 2) * 3 entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 16 = (2 * 2) ^ 2 entao
+  exiba "ok"
+senao
+  exiba "erro"

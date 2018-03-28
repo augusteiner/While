@@ -13,14 +13,23 @@ comando: ID ':=' expressao                          # atribuicao
        | '{' seqComando '}'                         # bloco
        ;
 
-expressao: INT                                      # inteiro
+expressao: ( exprAtom | exprAdd )                   # exprArit
          | 'leia'                                   # leia
-         | ID                                       # id
-         | expressao '*' expressao                  # opBin
-         | expressao '+' expressao                  # opBin
-         | expressao '-' expressao                  # opBin
          | '(' expressao ')'                        # expPar
          ;
+
+exprAtom: INT                                       # inteiro
+        | ID                                        # id
+        ;
+
+exprAdd: exprMul (( '+' | '-' ) exprMul)*
+       ;
+
+exprMul: exprPot (( '*' | '/' | '%' ) exprPot)*
+       ;
+
+exprPot: exprAtom ('^' exprAtom)*
+       ;
 
 bool: ('verdadeiro'|'falso')                        # booleano
     | expressao '=' expressao                       # opRel

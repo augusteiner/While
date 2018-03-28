@@ -3,6 +3,7 @@ package plp.enquanto.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
@@ -98,20 +99,63 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
-    public void exitOpBin(final EnquantoParser.OpBinContext ctx) {
-        final Expressao esq = (Expressao) getValue(ctx.expressao(0));
-        final Expressao dir = (Expressao) getValue(ctx.expressao(1));
-        final String op = ctx.getChild(1).getText();
-        final ExpBin exp;
+    public void exitExprArit(EnquantoParser.ExprAritContext ctx) {
+        setValue(ctx, getValue(ctx.getChild(0)));
+    }
+
+    @Override
+    public void exitExprAdd(final EnquantoParser.ExprAddContext ctx) {
+        exitExprBin(ctx);
+    }
+
+    @Override
+    public void exitExprMul(EnquantoParser.ExprMulContext ctx) {
+        exitExprBin(ctx);
+    }
+
+    @Override
+    public void exitExprPot(EnquantoParser.ExprPotContext ctx) {
+        exitExprBin(ctx);
+    }
+
+    private void exitExprBin(ParserRuleContext ctx) {
+        if (ctx.children.size() == 1) {
+            setValue(ctx, getValue(ctx.getChild(0)));
+            return;
+        }
+
+        Expressao esq = (Expressao) getValue(ctx.getChild(0));
+
+        for (int i = 2; i < ctx.getChildCount(); i += 2) {
+            final String op = ctx.getChild(i - 1).getText();
+            final ParseTree expCtx = ctx.getChild(i);
+            final Expressao dir = (Expressao) getValue(expCtx);
+
+            esq = exprBin(op, esq, dir);
+        }
+
+        setValue(ctx, esq);
+    }
+
+    private Expressao exprBin(String op, Expressao esq, Expressao dir) {
+        Expressao exp;
+
         if ("+".equals(op))
             exp = new ExpSoma(esq, dir);
         else if("*".equals(op))
-            exp = new ExpMult(esq, dir);
+            exp = new ExpMul(esq, dir);
         else if ("-".equals(op))
             exp = new ExpSub(esq, dir);
+        else if ("*".equals(op))
+            exp = new ExpMul(esq, dir);
+        else if ("/".equals(op))
+            exp = new ExpDiv(esq, dir);
+        else if ("^".equals(op))
+            exp = new ExpPot(esq, dir);
         else
             exp = new ExpSoma(esq, dir);
-        setValue(ctx, exp);
+
+        return exp;
     }
 
     @Override
