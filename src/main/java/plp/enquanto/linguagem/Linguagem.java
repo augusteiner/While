@@ -9,16 +9,18 @@ public interface Linguagem {
     final Map<String, Integer> ambiente = new HashMap<String, Integer>();
     final Scanner scanner = new Scanner(System.in);
 
-    interface Bool {
-        public boolean getValor();
+    interface ExpressaoBase<T> {
+        T getValor();
+    }
+
+    interface Bool extends ExpressaoBase<Boolean> {
     }
 
     interface Comando {
         public void execute();
     }
 
-    interface Expressao {
-        public int getValor();
+    interface Expressao extends ExpressaoBase<Integer> {
     }
 
     abstract class ExpBin implements Expressao {
@@ -151,7 +153,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return valor;
         }
     }
@@ -164,7 +166,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             final Integer v = ambiente.get(id);
             final int valor;
             if (v != null)
@@ -179,7 +181,7 @@ public interface Linguagem {
     Leia leia = new Leia();
     class Leia implements Expressao {
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return scanner.nextInt();
         }
     }
@@ -190,7 +192,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return esq.getValor() + dir.getValor();
         }
     }
@@ -201,7 +203,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return esq.getValor() - dir.getValor();
         }
     }
@@ -212,7 +214,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return esq.getValor() * dir.getValor();
         }
     }
@@ -223,7 +225,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return esq.getValor() / dir.getValor();
         }
     }
@@ -234,7 +236,7 @@ public interface Linguagem {
         }
 
         @Override
-        public int getValor() {
+        public Integer getValor() {
             return (int) Math.pow(esq.getValor(), dir.getValor());
         }
     }
@@ -247,7 +249,7 @@ public interface Linguagem {
         }
 
         @Override
-        public boolean getValor() {
+        public Boolean getValor() {
             return valor;
         }
     }
@@ -262,6 +264,19 @@ public interface Linguagem {
         }
     }
 
+    public class ExpDesigual extends ExpIgual {
+
+        public ExpDesigual(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public Boolean getValor() {
+            return !super.getValor();
+        }
+
+    }
+
     public class ExpIgual extends ExpRel {
 
         public ExpIgual(Expressao esq, Expressao dir) {
@@ -269,10 +284,43 @@ public interface Linguagem {
         }
 
         @Override
-        public boolean getValor() {
+        public Boolean getValor() {
             return esq.getValor() == dir.getValor();
         }
 
+    }
+
+    public class ExpMaior extends ExpRel {
+        public ExpMaior(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public Boolean getValor() {
+            return esq.getValor() > dir.getValor();
+        }
+    }
+
+    public class ExpMaiorIgual extends ExpRel {
+        public ExpMaiorIgual(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public Boolean getValor() {
+            return esq.getValor() >= dir.getValor();
+        }
+    }
+
+    public class ExpMenor extends ExpRel {
+        public ExpMenor(Expressao esq, Expressao dir) {
+            super(esq, dir);
+        }
+
+        @Override
+        public Boolean getValor() {
+            return esq.getValor() < dir.getValor();
+        }
     }
 
     public class ExpMenorIgual extends ExpRel {
@@ -281,7 +329,7 @@ public interface Linguagem {
         }
 
         @Override
-        public boolean getValor() {
+        public Boolean getValor() {
             return esq.getValor() <= dir.getValor();
         }
     }
@@ -294,7 +342,7 @@ public interface Linguagem {
         }
 
         @Override
-        public boolean getValor() {
+        public Boolean getValor() {
             return !b.getValor();
         }
     }
@@ -309,8 +357,38 @@ public interface Linguagem {
         }
 
         @Override
-        public boolean getValor() {
+        public Boolean getValor() {
             return esq.getValor() && dir.getValor();
+        }
+    }
+
+    public class OuLogico implements Bool {
+        private Bool esq;
+        private Bool dir;
+
+        public OuLogico(Bool esq, Bool dir) {
+            this.esq = esq;
+            this.dir = dir;
+        }
+
+        @Override
+        public Boolean getValor() {
+            return esq.getValor() || dir.getValor();
+        }
+    }
+
+    public class XorLogico implements Bool {
+        private Bool esq;
+        private Bool dir;
+
+        public XorLogico(Bool esq, Bool dir) {
+            this.esq = esq;
+            this.dir = dir;
+        }
+
+        @Override
+        public Boolean getValor() {
+            return esq.getValor() ^ dir.getValor();
         }
     }
 }

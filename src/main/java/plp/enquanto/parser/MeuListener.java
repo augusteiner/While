@@ -138,7 +138,7 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     private Expressao exprBin(String op, Expressao esq, Expressao dir) {
-        Expressao exp;
+        final Expressao exp;
 
         if ("+".equals(op))
             exp = new ExpSoma(esq, dir);
@@ -166,13 +166,6 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
-    public void exitELogico(final EnquantoParser.ELogicoContext ctx) {
-        final Bool esq = (Bool) getValue(ctx.bool(0));
-        final Bool dir = (Bool) getValue(ctx.bool(1));
-        setValue(ctx, new ELogico(esq, dir));
-    }
-
-    @Override
     public void exitBoolPar(final EnquantoParser.BoolParContext ctx) {
         setValue(ctx, getValue(ctx.bool()));
     }
@@ -196,17 +189,33 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
-    public void exitOpRel(final EnquantoParser.OpRelContext ctx) {
-        final Expressao esq = (Expressao) getValue(ctx.expressao(0));
-        final Expressao dir = (Expressao) getValue(ctx.expressao(1));
+    public void exitExprBool(final EnquantoParser.ExprBoolContext ctx) {
+        final Object esq = getValue(ctx.getChild(0));
+        final Object dir = getValue(ctx.getChild(2));
         final String op = ctx.getChild(1).getText();
-        final ExpRel exp;
-        if ("=".equals(op))
-            exp = new ExpIgual(esq, dir);
+        final Bool exp;
+
+        if ("e".equals(op))
+            exp = new ELogico((Bool) esq, (Bool) dir);
+        else if ("ou".equals(op))
+            exp = new OuLogico((Bool) esq, (Bool) dir);
+        else if ("xor".equals(op))
+            exp = new XorLogico((Bool) esq, (Bool) dir);
+        else if ("=".equals(op))
+            exp = new ExpIgual((Expressao) esq, (Expressao) dir);
+        else if ("<".equals(op))
+            exp = new ExpMenor((Expressao) esq, (Expressao) dir);
+        else if (">".equals(op))
+            exp = new ExpMaior((Expressao) esq, (Expressao) dir);
         else if ("<=".equals(op))
-            exp = new ExpMenorIgual(esq, dir);
+            exp = new ExpMenorIgual((Expressao) esq, (Expressao) dir);
+        else if (">=".equals(op))
+            exp = new ExpMaiorIgual((Expressao) esq, (Expressao) dir);
+        else if ("<>".equals(op))
+            exp = new ExpDesigual((Expressao) esq, (Expressao) dir);
         else
-            exp = new ExpIgual(esq, dir);
+            exp = new ExpIgual((Expressao) esq, (Expressao) dir);
+
         setValue(ctx, exp);
     }
 }

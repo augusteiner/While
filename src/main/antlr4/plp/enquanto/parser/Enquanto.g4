@@ -32,12 +32,14 @@ exprPot: exprAtom ('^' exprAtom)*
        ;
 
 bool: ('verdadeiro'|'falso')                        # booleano
-    | expressao '=' expressao                       # opRel
-    | expressao '<=' expressao                      # opRel
     | 'nao' bool                                    # naoLogico
-    | bool 'e' bool                                 # eLogico
+    | expressao (OP_REL_BOOL expressao)+            # exprBool
+    | bool (OP_BIN_BOOL bool)+                      # exprBool
     | '(' bool ')'                                  # boolPar
     ;
+
+OP_REL_BOOL: '=' | '<=' | '>=' | '<>' | '<' | '>' ;
+OP_BIN_BOOL: 'e' | 'ou' | 'xor' ;
 
 INT: ('0'..'9')+ ;
 ID: ('a'..'z')+;

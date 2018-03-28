@@ -1,0 +1,35 @@
+
+se 3 = 4 entao
+  exiba "erro: 3 = 4"
+senao
+  exiba "ok: nao 3 = 4"
+;
+
+se 3 < 4 entao
+  exiba "ok: 3 < 4"
+senao
+  exiba "erro: 3 >= 4"
+;
+
+se 3 > 4 entao
+  exiba "erro: 3 <= 4"
+senao
+  exiba "ok: nao 3 > 4"
+;
+
+se 3 <= 4 entao
+  exiba "ok: 3 <= 4"
+senao
+  exiba "erro: 3 > 4"
+;
+
+se 3 >= 4 entao
+  exiba "erro: 3 < 4"
+senao
+  exiba "ok: nao 3 >= 4"
+;
+
+se 3 <> 4 entao
+  exiba "ok: 3 <> 4"
+senao
+  exiba "erro: 3 <> 4"

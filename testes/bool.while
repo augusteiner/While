@@ -1,0 +1,71 @@
+
+se verdadeiro e falso entao
+  exiba "erro"
+senao
+  exiba "ok"
+;
+
+se falso e verdadeiro entao
+  exiba "erro"
+senao
+  exiba "ok"
+;
+
+se verdadeiro e verdadeiro entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se falso e falso entao
+  exiba "erro"
+senao
+  exiba "ok"
+;
+
+se verdadeiro ou falso entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se falso ou verdadeiro entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se verdadeiro ou verdadeiro entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se falso ou falso entao
+  exiba "erro"
+senao
+  exiba "ok"
+;
+
+se falso xor verdadeiro entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se verdadeiro xor falso entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se falso xor falso entao
+  exiba "erro"
+senao
+  exiba "ok"
+;
+
+se verdadeiro xor verdadeiro entao
+  exiba "erro"
+senao
+  exiba "ok"
