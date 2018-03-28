@@ -15,20 +15,23 @@ comando: ID ':=' expressao                          # atribuicao
 
 expressao: ( exprAtom | exprAdd )                   # exprArit
          | 'leia'                                   # leia
-         | '(' expressao ')'                        # expPar
          ;
 
 exprAtom: INT                                       # inteiro
         | ID                                        # id
+        | '(' expressao ')'                         # exprPar
         ;
 
 exprAdd: exprMul (( '+' | '-' ) exprMul)*
+       | '(' exprMul ')'
        ;
 
 exprMul: exprPot (( '*' | '/' | '%' ) exprPot)*
+       | '(' exprPot ')'
        ;
 
 exprPot: exprAtom ('^' exprAtom)*
+       | '(' exprAtom ')'
        ;
 
 bool: ('verdadeiro'|'falso')                        # booleano

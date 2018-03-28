@@ -177,7 +177,7 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
-    public void exitExpPar(final EnquantoParser.ExpParContext ctx) {
+    public void exitExprPar(final EnquantoParser.ExprParContext ctx) {
         setValue(ctx, getValue(ctx.expressao()));
     }
 
