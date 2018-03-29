@@ -1,6 +1,6 @@
 n := leia;
 n = n - n / 5 * 5;
-se n=0 então exiba "zero"
+se n=0 entao exiba "zero"
 senaose n = 1 entao exiba "um"
 senaose n = 2 entao exiba "dois"
 senaose n = 3 entao exiba "tres"
