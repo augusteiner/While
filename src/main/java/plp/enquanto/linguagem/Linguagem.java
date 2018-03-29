@@ -186,6 +186,19 @@ public interface Linguagem {
         }
     }
 
+    class ExpNeg implements Expressao {
+        private Expressao exp;
+
+        public ExpNeg(Expressao exp) {
+            this.exp = exp;
+        }
+
+        @Override
+        public Integer getValor() {
+            return -exp.getValor();
+        }
+    }
+
     class ExpSoma extends ExpBin {
         public ExpSoma(Expressao esq, Expressao dir) {
             super(esq, dir);

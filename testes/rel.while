@@ -33,3 +33,16 @@ se 3 <> 4 entao
   exiba "ok: 3 <> 4"
 senao
   exiba "erro: 3 <> 4"
+;
+
+se -1 > 0 entao
+  exiba "erro: -1 < 0"
+senao
+  exiba "ok: -1 <= 0"
+;
+
+se -1 > -2 entao
+  exiba "ok: -1 > -2"
+senao
+  exiba "erro: -1 > -2"
+

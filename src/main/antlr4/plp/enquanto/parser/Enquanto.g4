@@ -15,6 +15,7 @@ comando: ID ':=' expressao                          # atribuicao
 
 expressao: ( exprAtom | exprAdd )                   # exprArit
          | 'leia'                                   # leia
+         | ( '-' ) expressao                        # exprNeg
          ;
 
 exprAtom: INT                                       # inteiro

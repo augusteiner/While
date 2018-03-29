@@ -182,6 +182,13 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
+    public void exitExprNeg(EnquantoParser.ExprNegContext ctx) {
+        final Expressao exp = (Expressao) getValue(ctx.expressao());
+
+        setValue(ctx, new ExpNeg(exp));
+    }
+
+    @Override
     public void exitExiba(final EnquantoParser.ExibaContext ctx) {
         final String t = ctx.Texto().getText();
         final String texto = t.substring(1, t.length() - 1);
