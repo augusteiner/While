@@ -1,8 +1,32 @@
 grammar Enquanto;
 
-programa : seqComando;     // sequência de comandos
+programa: seqInstr
+        ;
 
-seqComando: comando (';' comando)* ;
+decl: declFuncao
+    ;
+
+instr: decl                                         # instrucao
+     | comando                                      # instrucao
+     ;
+
+seqInstr: instr (';' instr)*
+        ;
+
+seqComando: comando (';' comando)*
+          ;
+
+argList: (ID (',' ID)*)?
+       ;
+
+paramList: (expressao (',' expressao)*)?
+         ;
+
+execFuncao: ID '(' paramList ')'
+         ;
+
+declFuncao: ID '(' argList ')' '=' expressao
+         ;
 
 comando: ID ':=' expressao                          # atribuicao
        | 'skip'                                     # skip
@@ -19,12 +43,14 @@ comando: ID ':=' expressao                          # atribuicao
          'outro' ':' comando                        # escolha
        | 'exiba' Texto                              # exiba
        | 'escreva' expressao                        # escreva
+       | execFuncao                                 # funcao
        | '{' seqComando '}'                         # bloco
        ;
 
 expressao: ( exprAtom | exprAdd )                   # exprArit
          | 'leia'                                   # leia
          | ( '-' ) expressao                        # exprNeg
+         | execFuncao                               # exprExecFuncao
          ;
 
 exprAtom: INT                                       # inteiro
@@ -55,7 +81,7 @@ operador_rel: '=' | '<=' | '>=' | '<>' | '<' | '>' ;
 operador_bool: 'e' | 'ou' | 'xor' ;
 
 INT: ('0'..'9')+ ;
-ID: ('a'..'z')+;
-Texto: '"' .*? '"';
+ID: ('a'..'z')+ ;
+Texto: '"' .*? '"' ;
 
 Espaco: [ \t\n\r] -> skip;

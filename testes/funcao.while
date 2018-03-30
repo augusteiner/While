@@ -1,0 +1,31 @@
+
+identidade(a) = a;
+
+soma(a, b) = a + b;
+sub(a, b) = a - b;
+
+b := identidade(1);
+a := identidade(2);
+
+se 1 = b entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 2 = a entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 3 = soma(1, 2) entao
+  exiba "ok"
+senao
+  exiba "erro"
+;
+
+se 2 < sub(4, 1) entao
+  exiba "ok"
+senao
+  exiba "erro"

@@ -1,13 +1,10 @@
 package plp.enquanto.linguagem;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public interface Linguagem {
-    final Map<String, Integer> ambiente = new HashMap<String, Integer>();
-    final Scanner scanner = new Scanner(System.in);
+    Ambiente AMBIENTE = new Ambiente();
+    Scanner SCANNER = new Scanner(System.in);
 
     interface ExpressaoBase<T> {
         T getValor();
@@ -16,31 +13,68 @@ public interface Linguagem {
     interface Bool extends ExpressaoBase<Boolean> {
     }
 
-    interface Comando {
-        public void execute();
+    interface Instrucao {
+    }
+
+    interface Comando extends Instrucao {
+        void execute();
     }
 
     interface Expressao extends ExpressaoBase<Integer> {
     }
 
     abstract class ExpBin implements Expressao {
-        protected Expressao esq;
-        protected Expressao dir;
+        Expressao esq;
+        Expressao dir;
 
-        public ExpBin(Expressao esq, Expressao dir) {
+        ExpBin(Expressao esq, Expressao dir) {
             this.esq = esq;
             this.dir = dir;
         }
     }
 
+    class Ambiente {
+        final Map<String, Integer> ids;
+        final Ambiente legado;
+
+        Ambiente() {
+            this.ids = new HashMap<String, Integer>();
+            this.legado = this;
+        }
+
+        public Ambiente(Ambiente legado) {
+            this.ids = new HashMap<String, Integer>();
+            this.legado = legado;
+        }
+
+        public Ambiente getLegado() {
+            return legado;
+        }
+
+        Integer get(String id) {
+            if (!ids.containsKey(id)) {
+                return legado.get(id);
+            } else {
+                return ids.get(id);
+            }
+        }
+
+        void put(String id, Integer valor) {
+            ids.put(id, valor);
+        }
+    }
+
     class Programa {
-        private List<Comando> comandos;
-        public Programa(List<Comando> comandos) {
+        private List<Instrucao> comandos;
+
+        public Programa(List<Instrucao> comandos) {
             this.comandos = comandos;
         }
+
         public void execute() {
-            for (Comando comando : comandos) {
-                comando.execute();
+            for (Instrucao comando : comandos) {
+                if (comando instanceof Comando)
+                    ((Comando) comando).execute();
             }
         }
     }
@@ -228,11 +262,72 @@ public interface Linguagem {
         }
     }
 
+    class ChamadaFuncao implements Expressao {
+        private Funcao funcao;
+        private List<Expressao> params;
+
+        public ChamadaFuncao(Funcao funcao, List<Expressao> params) {
+            this.params = params;
+            this.funcao = funcao;
+        }
+
+        @Override
+        public Integer getValor() {
+            for (int i = 0; i < funcao.args.size(); i++) {
+                String id = funcao.args.get(i);
+
+                funcao.ambiente.put(id, params.get(i).getValor());
+            }
+
+            return funcao.retorno.getValor();
+        }
+    }
+
+    class Funcao implements Instrucao {
+        private String id;
+        private Expressao retorno;
+
+        private Ambiente ambiente;
+        private List<String> args;
+
+        public Funcao(String id, Ambiente ambiente) {
+            this.id = id;
+            this.ambiente = ambiente;
+        }
+
+        public void setArgs(List<String> args) {
+            this.args = args;
+        }
+
+        public void setRetorno(Expressao retorno) {
+            this.retorno = retorno;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder buffer = new StringBuilder();
+            String argDelim = "";
+
+            for (String arg : args) {
+                buffer.append(argDelim);
+                buffer.append(arg);
+
+                argDelim = ", ";
+            }
+
+            return String.format("%s(%s)", id, buffer.toString());
+        }
+    }
+
     class Atribuicao implements Comando {
+        private Ambiente ambiente;
+
         private String id;
         private Expressao exp;
 
-        public Atribuicao(String id, Expressao exp) {
+        public Atribuicao(String id, Expressao exp, Ambiente ambiente) {
+            this.ambiente = ambiente;
+
             this.id = id;
             this.exp = exp;
         }
@@ -257,9 +352,11 @@ public interface Linguagem {
     }
 
     class Id implements Expressao {
+        private Ambiente ambiente;
         private String id;
 
-        public Id(String id) {
+        public Id(String id, Ambiente ambiente) {
+            this.ambiente = ambiente;
             this.id = id;
         }
 
@@ -275,7 +372,7 @@ public interface Linguagem {
             return valor;
         }
 
-        public void setValor(Integer valor) {
+        void setValor(Integer valor) {
             ambiente.put(id, valor);
         }
     }
@@ -284,7 +381,7 @@ public interface Linguagem {
     class Leia implements Expressao {
         @Override
         public Integer getValor() {
-            return scanner.nextInt();
+            return SCANNER.nextInt();
         }
     }
 
@@ -376,17 +473,16 @@ public interface Linguagem {
     }
 
     abstract class ExpRel implements Bool {
-        protected Expressao esq;
-        protected Expressao dir;
+        Expressao esq;
+        Expressao dir;
 
-        public ExpRel(Expressao esq, Expressao dir) {
+        ExpRel(Expressao esq, Expressao dir) {
             this.esq = esq;
             this.dir = dir;
         }
     }
 
-    public class ExpDesigual extends ExpIgual {
-
+    class ExpDesigual extends ExpIgual {
         public ExpDesigual(Expressao esq, Expressao dir) {
             super(esq, dir);
         }
@@ -395,20 +491,17 @@ public interface Linguagem {
         public Boolean getValor() {
             return !super.getValor();
         }
-
     }
 
-    public class ExpIgual extends ExpRel {
-
+    class ExpIgual extends ExpRel {
         public ExpIgual(Expressao esq, Expressao dir) {
             super(esq, dir);
         }
 
         @Override
         public Boolean getValor() {
-            return esq.getValor() == dir.getValor();
+            return esq.getValor().equals(dir.getValor());
         }
-
     }
 
     public class ExpMaior extends ExpRel {
@@ -455,7 +548,7 @@ public interface Linguagem {
         }
     }
 
-    public class NaoLogico implements Bool {
+    class NaoLogico implements Bool {
         private Bool b;
 
         public NaoLogico(Bool b) {

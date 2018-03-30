@@ -1,22 +1,24 @@
 package plp.enquanto.parser;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
+import org.antlr.v4.runtime.tree.TerminalNode;
+import plp.enquanto.linguagem.Linguagem;
 import plp.enquanto.linguagem.Linguagem.*;
 
 public class MeuListener extends EnquantoBaseListener {
     private final Leia leia = new Leia();
     private final Skip skip = new Skip();
+    private Ambiente ambienteAtual = Linguagem.AMBIENTE;
+
     private final ParseTreeProperty<Object> values = new ParseTreeProperty<Object>();
 
     private Programa programa;
+    private Map<String, Funcao> funcoes = new Hashtable<String, Funcao>();
 
     public Programa getPrograma() {
         return programa;
@@ -63,7 +65,7 @@ public class MeuListener extends EnquantoBaseListener {
 
     @Override
     public void exitPara(EnquantoParser.ParaContext ctx) {
-        final Id id = new Id(ctx.ID().getText());
+        final Id id = new Id(ctx.ID().getText(), ambienteAtual);
         final Expressao de = (Expressao) getValue(ctx.expressao(0));
         final Expressao ate = (Expressao) getValue(ctx.expressao(1));
         final Expressao passo = (Expressao) getValue(ctx.INT());
@@ -92,14 +94,14 @@ public class MeuListener extends EnquantoBaseListener {
     @Override
     public void exitPrograma(final EnquantoParser.ProgramaContext ctx) {
         @SuppressWarnings("unchecked")
-        final List<Comando> cmds = (List<Comando>) getValue(ctx.seqComando());
+        final List<Instrucao> cmds = (List<Instrucao>) getValue(ctx.seqInstr());
         programa = new Programa(cmds);
         setValue(ctx, programa);
     }
 
     @Override
     public void exitId(final EnquantoParser.IdContext ctx) {
-        setValue(ctx, new Id(ctx.ID().getText()));
+        setValue(ctx, new Id(ctx.ID().getText(), ambienteAtual));
     }
 
     @Override
@@ -112,10 +114,78 @@ public class MeuListener extends EnquantoBaseListener {
     }
 
     @Override
+    public void enterDeclFuncao(EnquantoParser.DeclFuncaoContext ctx) {
+        ambienteAtual = new Ambiente(ambienteAtual);
+
+        final String id = ctx.ID().getText();
+        final Funcao funcao = new Funcao(id, ambienteAtual);
+
+        funcoes.put(id, funcao);
+    }
+
+    @Override
+    public void exitDeclFuncao(EnquantoParser.DeclFuncaoContext ctx) {
+        final String id = ctx.ID().getText();
+        final Expressao retorno = (Expressao) getValue(ctx.expressao());
+        final Funcao funcao = funcoes.get(id);
+
+        final List<String> args = new ArrayList<String>();
+        final EnquantoParser.ArgListContext argsCtx = ctx.argList();
+
+        for (TerminalNode idNode : argsCtx.ID()) {
+            args.add(idNode.getText());
+        }
+
+        funcao.setArgs(args);
+        funcao.setRetorno(retorno);
+        ambienteAtual = ambienteAtual.getLegado();
+
+        setValue(ctx, funcao);
+    }
+
+    @Override
+    public void exitExprExecFuncao(EnquantoParser.ExprExecFuncaoContext ctx) {
+        final String id = ctx.execFuncao().ID().getText();
+        final Funcao funcao = funcoes.get(id);
+        final EnquantoParser.ParamListContext paramCtx = ctx.execFuncao().paramList();
+        final List<Expressao> params = new ArrayList<Expressao>();
+
+        for (EnquantoParser.ExpressaoContext expCtx : paramCtx.expressao()) {
+            params.add((Expressao) getValue(expCtx));
+        }
+
+        setValue(ctx, new ChamadaFuncao(funcao, params));
+    }
+
+    @Override
+    public void exitDecl(EnquantoParser.DeclContext ctx) {
+        setValue(ctx, getValue(ctx.declFuncao()));
+    }
+
+    @Override
+    public void exitInstrucao(EnquantoParser.InstrucaoContext ctx) {
+        final Instrucao instr = (Instrucao) getValue(ctx.getChild(0));
+
+        setValue(ctx, instr);
+    }
+
+    @Override
+    public void exitSeqInstr(EnquantoParser.SeqInstrContext ctx) {
+        List<Instrucao> comandos = new ArrayList<Instrucao>();
+
+        for (EnquantoParser.InstrContext instrCtx : ctx.instr()) {
+            comandos.add((Instrucao) getValue(instrCtx));
+        }
+
+        setValue(ctx, comandos);
+    }
+
+    @Override
     public void exitAtribuicao(final EnquantoParser.AtribuicaoContext ctx) {
         final String id = ctx.ID().getText();
         final Expressao exp = (Expressao) getValue(ctx.expressao());
-        setValue(ctx, new Atribuicao(id, exp));
+
+        setValue(ctx, new Atribuicao(id, exp, ambienteAtual));
     }
 
     @Override
