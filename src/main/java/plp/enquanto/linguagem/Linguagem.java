@@ -151,6 +151,38 @@ public interface Linguagem {
         }
     }
 
+    class Escolha implements Comando {
+        private Expressao padrao;
+        private Map<Expressao, Comando> comandos;
+        private Comando outro;
+
+        public Escolha(Expressao padrao, Map<Expressao, Comando> comandos, Comando outro) {
+            this.padrao = padrao;
+            this.comandos = comandos;
+            this.outro = outro;
+        }
+
+        @Override
+        public void execute() {
+            boolean executaOutro = true;
+            int valor = padrao.getValor();
+
+            for (Expressao exp : comandos.keySet()) {
+                if (exp.getValor() == valor) {
+                    executaOutro = false;
+
+                    comandos.get(exp).execute();
+                    // XXX: pára a execução por padrão
+                    break;
+                }
+            }
+
+            if (executaOutro) {
+                outro.execute();
+            }
+        }
+    }
+
     class Enquanto implements Comando {
         private Bool condicao;
         private Comando faca;

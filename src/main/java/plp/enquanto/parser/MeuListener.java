@@ -1,7 +1,9 @@
 package plp.enquanto.parser;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -188,6 +190,25 @@ public class MeuListener extends EnquantoBaseListener {
         final Bool condicao = (Bool) getValue(ctx.bool());
         final Comando comando = (Comando) getValue(ctx.comando());
         setValue(ctx, new Enquanto(condicao, comando));
+    }
+
+    @Override
+    public void exitEscolha(EnquantoParser.EscolhaContext ctx) {
+        final int qtCasos = ctx.comando().size() - 1;
+
+        final Expressao padrao = (Expressao) getValue(ctx.expressao());
+        final Comando outro = (Comando) getValue(ctx.comando(qtCasos));
+
+        final Map<Expressao, Comando> comandos = new Hashtable<Expressao, Comando>();
+
+        for (int i = 0; i < qtCasos; i++) {
+            final Expressao _padrao = new Inteiro(Integer.parseInt(ctx.INT(i).getText()));
+            final Comando _comando = (Comando) getValue(ctx.comando(i));
+
+            comandos.put(_padrao, _comando);
+        }
+
+        setValue(ctx, new Escolha(padrao, comandos, outro));
     }
 
     @Override

@@ -14,6 +14,9 @@ comando: ID ':=' expressao                          # atribuicao
          'ate' expressao ('passo' INT)?
          'faca' comando                             # para
        | 'enquanto' bool 'faca' comando             # enquanto
+       | 'escolha' expressao
+         ( 'caso' INT ':' comando )*
+         'outro' ':' comando                        # escolha
        | 'exiba' Texto                              # exiba
        | 'escreva' expressao                        # escreva
        | '{' seqComando '}'                         # bloco

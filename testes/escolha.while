@@ -1,0 +1,26 @@
+
+escolha 1
+  caso 1 : exiba "ok"
+  caso 1 : exiba "erro"
+  outro  : exiba "erro"
+;
+
+escolha 2
+  caso 2 : exiba "ok"
+  caso 3 : exiba "erro"
+  caso 0 : exiba "erro"
+  outro  : exiba "erro"
+;
+
+escolha 2
+  caso 1 : exiba "erro"
+  caso 2 : exiba "ok"
+  caso 0 : exiba "erro"
+  outro  : exiba "erro"
+;
+
+escolha 1
+  caso 2 : exiba "erro"
+  caso 3 : exiba "erro"
+  caso 0 : exiba "erro"
+  outro  : exiba "ok"
