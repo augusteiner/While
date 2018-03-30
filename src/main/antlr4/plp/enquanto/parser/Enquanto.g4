@@ -6,7 +6,9 @@ seqComando: comando (';' comando)* ;
 
 comando: ID ':=' expressao                          # atribuicao
        | 'skip'                                     # skip
-       | 'se' bool 'entao' comando 'senao' comando  # se
+       | 'se' bool 'entao' comando
+         ( 'senaose' bool 'entao' comando )*
+         'senao' comando                            # se
        | 'para' ID
          'de' expressao
          'ate' expressao ('passo' INT)?

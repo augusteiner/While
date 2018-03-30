@@ -78,23 +78,56 @@ public interface Linguagem {
         }
     }
 
-    class Se implements Comando {
+    class SenaoSe implements Comando {
         private Bool condicao;
         private Comando entao;
-        private Comando senao;
 
-        public Se(Bool condicao, Comando entao, Comando senao) {
+        public SenaoSe(Bool condicao, Comando entao) {
             this.condicao = condicao;
             this.entao = entao;
+        }
+
+        @Override
+        public void execute() {
+            entao.execute();
+        }
+    }
+
+    class Se extends SenaoSe implements Comando {
+        private Bool condicao;
+        private Comando senao;
+        private List<SenaoSe> listaSenaoSe;
+
+        public Se(Bool condicao, Comando entao, List<SenaoSe> listaSenaoSe, Comando senao) {
+            super(condicao, entao);
+
+            this.listaSenaoSe = listaSenaoSe;
+            this.condicao = condicao;
             this.senao = senao;
         }
 
         @Override
         public void execute() {
-            if (condicao.getValor())
-                entao.execute();
-            else
+            boolean executaSenao = true;
+
+            if (condicao.getValor()) {
+                executaSenao = false;
+
+                super.execute();
+            } else {
+                for (SenaoSe senaoSe : listaSenaoSe) {
+                    if (senaoSe.condicao.getValor()) {
+                        executaSenao = false;
+
+                        senaoSe.execute();
+                        break;
+                    }
+                }
+            }
+
+            if (executaSenao) {
                 senao.execute();
+            }
         }
     }
 
@@ -276,7 +309,13 @@ public interface Linguagem {
 
         @Override
         public Integer getValor() {
-            return esq.getValor() / dir.getValor();
+            int divisor = dir.getValor();
+
+            if (divisor == 0) {
+                throw new ArithmeticException("Divisão por zero");
+            }
+
+            return esq.getValor() / divisor;
         }
     }
 

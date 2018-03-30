@@ -1,0 +1,11 @@
+
+a := 0;
+
+se a = 1 entao
+  exiba "a = 1"
+senaose a = 2 entao
+  exiba "a = 2"
+senaose a = 3 entao
+  exiba "a = 3"
+senao
+  exiba "a > 3 ou a < 1"
