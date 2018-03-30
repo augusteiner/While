@@ -17,14 +17,23 @@ public class Principal {
 
     private static ParseTree parse(String arq) {
         CharStream input;
+        System.err.println(String.format("Abrindo arquivo: '%s'.", arq));
+
         try {
             input = CharStreams.fromFileName(arq);
         } catch (IOException e) {
-            input = CharStreams.fromString("exiba \"Arquivo não encontrado.\"");
+            String err = String.format("Arquivo: '%s' não encontrado.", arq);
+
+            System.err.println(err);
+            System.exit(1);
+
+            throw new RuntimeException(err);
         }
+
         final EnquantoLexer lexer = new EnquantoLexer(input);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final EnquantoParser parser = new EnquantoParser(tokens);
+
         return parser.programa();
     }
 
