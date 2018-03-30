@@ -7,6 +7,10 @@ seqComando: comando (';' comando)* ;
 comando: ID ':=' expressao                          # atribuicao
        | 'skip'                                     # skip
        | 'se' bool 'entao' comando 'senao' comando  # se
+       | 'para' ID
+         'de' expressao
+         'ate' expressao ('passo' INT)?
+         'faca' comando                             # para
        | 'enquanto' bool 'faca' comando             # enquanto
        | 'exiba' Texto                              # exiba
        | 'escreva' expressao                        # escreva

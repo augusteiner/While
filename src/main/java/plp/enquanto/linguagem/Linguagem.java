@@ -45,6 +45,39 @@ public interface Linguagem {
         }
     }
 
+    class Para implements Comando {
+        final Id id;
+
+        final Expressao de;
+        final Expressao ate;
+        final Expressao passo;
+
+        final Comando faca;
+
+        public Para(Id id, Expressao de, Expressao ate, Expressao passo, Comando faca) {
+            this.id = id;
+
+            this.de = de;
+            this.ate = ate;
+            this.passo = null == passo ? new Inteiro(1) : passo;
+
+            this.faca = faca;
+        }
+
+        @Override
+        public void execute() {
+            id.setValor(de.getValor());
+
+            for (
+                int i = id.getValor();
+                i <= ate.getValor();
+                i += passo.getValor(), id.setValor(i)
+            ) {
+                faca.execute();
+            }
+        }
+    }
+
     class Se implements Comando {
         private Bool condicao;
         private Comando entao;
@@ -175,6 +208,10 @@ public interface Linguagem {
                 valor = 0;
 
             return valor;
+        }
+
+        public void setValor(Integer valor) {
+            ambiente.put(id, valor);
         }
     }
 

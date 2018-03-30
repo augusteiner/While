@@ -1,5 +1,5 @@
 n := 100;
-para i de 1 ate n faca {
+para i de 1 ate n passo 1 faca {
   escreva i;
   n := n / 2
 }
