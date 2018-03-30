@@ -2,10 +2,10 @@
 a := 0;
 
 se a = 1 entao
-  exiba "a = 1"
+  exiba "erro"
 senaose a = 2 entao
-  exiba "a = 2"
+  exiba "erro"
 senaose a = 3 entao
-  exiba "a = 3"
+  exiba "erro"
 senao
-  exiba "a > 3 ou a < 1"
+  exiba "ok"
