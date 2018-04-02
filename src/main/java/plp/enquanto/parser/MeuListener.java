@@ -272,7 +272,7 @@ public class MeuListener extends EnquantoBaseListener {
         final Map<Expressao, Comando> comandos = new LinkedHashMap<Expressao, Comando>();
 
         for (int i = 0; i < qtCasos; i++) {
-            final Expressao _padrao = new Inteiro(Integer.parseInt(ctx.INT(i).getText()));
+            final Expressao _padrao = new Inteiro(Integer.valueOf(ctx.INT(i).getText()));
             final Comando _comando = (Comando) getValue(ctx.comando(i));
 
             comandos.put(_padrao, _comando);

@@ -202,7 +202,7 @@ public interface Linguagem {
             int valor = padrao.getValor();
 
             for (Expressao exp : comandos.keySet()) {
-                if (exp.getValor() == valor) {
+                if (exp.getValor().equals(valor)) {
                     executaOutro = false;
 
                     comandos.get(exp).execute();
@@ -438,11 +438,7 @@ public interface Linguagem {
 
         @Override
         public Integer getValor() {
-            int divisor = dir.getValor();
-
-            if (divisor == 0) {
-                throw new ArithmeticException("Divisão por zero");
-            }
+            Integer divisor = dir.getValor();
 
             return esq.getValor() / divisor;
         }
